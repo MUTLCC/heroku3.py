@@ -189,6 +189,12 @@ class App(BaseResource):
         return self._h._get_resources(
             resource=("apps", self.name, "dynos"), obj=Dyno, app=self, map=DynoListResource, **kwargs
         )
+    
+    def stop_dyno(self):
+        data = {'ps': self.process}
+        
+        r = self._h._http_resource(method='POST', resource=('apps', self.app.name, 'ps', 'stop'), data=data)
+        r.raise_for_status()
 
     def kill_dyno(self, dyno_id_or_name):
         r = self._h._http_resource(method="DELETE", resource=("apps", self.id, "dynos", quote(dyno_id_or_name)))
