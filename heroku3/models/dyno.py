@@ -32,7 +32,7 @@ class Dyno(BaseResource):
     def stop_dyno(self):
         data = {'ps': self.process}
         
-        r = self._h._http_resource(method='POST', resource=('apps', self.app.name, 'ps', 'stop'), data=data)
+        r = self._h._http_resource(method='POST', resource=('apps', self.app.name, 'ps', 'stop'))
         r.raise_for_status()
         
     def restart(self):
