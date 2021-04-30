@@ -191,9 +191,9 @@ class App(BaseResource):
         )
     
     def stop_dyno(self):
-        data = {'ps': self.process}
+        data = self._h._resource_serialize(payload)
         
-        r = self._h._http_resource(method='POST', resource=('apps', self.app.name, 'ps', 'stop'), data=data)
+        r = self._h._http_resource(method='POST', resource=('apps', self.name, 'ps', 'stop'), data=data)
         r.raise_for_status()
 
     def kill_dyno(self, dyno_id_or_name):
