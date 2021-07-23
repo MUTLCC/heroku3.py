@@ -35,15 +35,15 @@ version = get_version("heroku3", "__init__.py")
 
 
 setup(
-    name="heroku3",
+    name="herokum",
     version=version,
     description="Heroku API Wrapper.",
     long_description=open("README.rst").read() + "\n\n" + open("HISTORY.rst").read(),
     long_description_content_type="text/x-rst",
     author="Martin Moss",
     author_email="martin_moss@btinternet.com",
-    url="https://github.com/TeleDoge/heroku3.py",
-    download_url="https://github.com/TeleDoge/heroku3.py/tarball/v4.2.5",
+    url="https://github.com/MUTLCC/herokum",
+    download_url="https://github.com/MUTLCC/herokum/tarball/v4.2.6",
     packages=["heroku3"],
     package_data={"": ["LICENSE",]},
     include_package_data=True,
