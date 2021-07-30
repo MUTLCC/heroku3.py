@@ -40,10 +40,10 @@ setup(
     description="Heroku API Wrapper.",
     long_description=open("README.rst").read() + "\n\n" + open("HISTORY.rst").read(),
     long_description_content_type="text/x-rst",
-    author="Martin Moss",
-    author_email="martin_moss@btinternet.com",
+    author="Mutlu",
+    author_email="",
     url="https://github.com/MUTLCC/herokum",
-    download_url="https://github.com/MUTLCC/herokum/tarball/v4.2.6",
+    download_url="https://github.com/MUTLCC/herokum/tarball/v4.2.7",
     packages=["heroku3"],
     package_data={
         "": [
