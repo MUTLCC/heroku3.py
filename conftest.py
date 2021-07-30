@@ -5,6 +5,7 @@ from __future__ import division, print_function, absolute_import
 # Third party libraries
 import pytest
 import requests
+
 from heroku3.api import HerokuCore
 from heroku3.models.configvars import ConfigVars
 
@@ -42,10 +43,7 @@ def config_vars(config_dict, app, heroku_core):
 def extra_config_dict():
     # Because the ``unit`` package will only be added to ``sys.path`` during
     # discovery.
-    from unit.models.configvars import (
-        EXTRA_CONFIG_VAR_KEYS,
-        EXTRA_CONFIG_VAR_VALUES,
-    )
+    from unit.models.configvars import EXTRA_CONFIG_VAR_KEYS, EXTRA_CONFIG_VAR_VALUES
 
     return dict(zip(EXTRA_CONFIG_VAR_KEYS, EXTRA_CONFIG_VAR_VALUES))
 

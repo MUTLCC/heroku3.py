@@ -18,6 +18,7 @@ from requests.exceptions import HTTPError
 # Project libraries
 from .models import Plan, RateLimit
 from .helpers import is_collection, validate_name
+from .exceptions import InvalidNameException
 from .models.app import App
 from .models.key import Key
 from .rendezvous import Rendezvous
@@ -31,7 +32,6 @@ from .models.app_setup import AppSetup
 from .models.configvars import ConfigVars
 from .models.logsession import LogSession
 from .models.account.feature import AccountFeature
-from .exceptions import InvalidNameException
 
 if sys.version_info > (3, 0):
     from urllib.parse import quote
@@ -115,7 +115,12 @@ class HerokuCore(object):
             raise ResponseError("The API Response was not valid.")
 
     def _get_headers_for_request(
-        self, legacy=False, order_by=None, limit=None, valrange=None, sort=None,
+        self,
+        legacy=False,
+        order_by=None,
+        limit=None,
+        valrange=None,
+        sort=None,
     ):
         headers = {}
         if legacy is True:
@@ -360,7 +365,7 @@ class Heroku(HerokuCore):
             else:
                 raise InvalidNameException(
                     "Name must start with a letter, end with a letter or digit and can only contain lowercase letters, digits, and dashes."
-                    )
+                )
 
         if stack_id_or_name:
             payload["stack"] = stack_id_or_name
@@ -485,8 +490,9 @@ class Heroku(HerokuCore):
         item = self._resource_deserialize(r.content.decode("utf-8"))
         return OAuthToken.new_from_dict(item, h=self)
 
-    def run_command_on_app(self, appname, command, size='standard-1x', attach=True, printout=True, env=None,
-                           timeout_secs=60):
+    def run_command_on_app(
+        self, appname, command, size="standard-1x", attach=True, printout=True, env=None, timeout_secs=60
+    ):
         """Run a remote command attach=True if you want to capture the output"""
         if attach:
             attach = True

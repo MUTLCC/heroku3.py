@@ -15,7 +15,15 @@ except ImportError:
 
 
 @pytest.mark.parametrize(
-    "key, expected", chain(zip_longest(CONFIG_VAR_KEYS, tuple(), fillvalue=True,), [("Inexsitant", False)])
+    "key, expected",
+    chain(
+        zip_longest(
+            CONFIG_VAR_KEYS,
+            tuple(),
+            fillvalue=True,
+        ),
+        [("Inexsitant", False)],
+    ),
 )
 def test___contains__(config_vars, key, expected):
     assert (key in config_vars) is expected

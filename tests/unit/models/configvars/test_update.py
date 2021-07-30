@@ -16,13 +16,18 @@ except ImportError:
 
 @responses.activate
 def test_update_when_response_ok(
-    config_vars, config_dict, extra_config_dict,
+    config_vars,
+    config_dict,
+    extra_config_dict,
 ):
     final_config = copy.copy(config_dict)
     final_config.update(extra_config_dict)
 
     responses.add(
-        responses.PATCH, config_vars._h._url_for(*config_vars._resource), status=200, json=final_config,
+        responses.PATCH,
+        config_vars._h._url_for(*config_vars._resource),
+        status=200,
+        json=final_config,
     )
 
     new_config_vars = config_vars.update(extra_config_dict)
@@ -34,10 +39,14 @@ def test_update_when_response_ok(
 
 @responses.activate
 def test_update_raise_exception_if_response_ko(
-    config_vars, extra_config_dict,
+    config_vars,
+    extra_config_dict,
 ):
     responses.add(
-        responses.PATCH, config_vars._h._url_for(*config_vars._resource), status=500, json={},
+        responses.PATCH,
+        config_vars._h._url_for(*config_vars._resource),
+        status=500,
+        json={},
     )
 
     with pytest.raises(requests.HTTPError):

@@ -45,7 +45,11 @@ setup(
     url="https://github.com/MUTLCC/herokum",
     download_url="https://github.com/MUTLCC/herokum/tarball/v4.2.6",
     packages=["heroku3"],
-    package_data={"": ["LICENSE",]},
+    package_data={
+        "": [
+            "LICENSE",
+        ]
+    },
     include_package_data=True,
     install_requires=required,
     license="MIT",

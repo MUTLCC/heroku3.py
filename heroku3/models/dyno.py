@@ -26,15 +26,15 @@ class Dyno(BaseResource):
         r = self._h._http_resource(method="DELETE", resource=("apps", self.app.id, "dynos", self.name))
 
         r.raise_for_status()
-        
+
         return r.ok
-    
+
     def stop_dyno(self):
-        data = {'ps': self.process}
-        
-        r = self._h._http_resource(method='POST', resource=('apps', self.app.name, 'ps', 'stop'))
+        data = {"ps": self.process}
+
+        r = self._h._http_resource(method="POST", resource=("apps", self.app.name, "ps", "stop"))
         r.raise_for_status()
-        
+
     def restart(self):
         if self.type == "run":
             raise RestartRunException(

@@ -154,6 +154,7 @@ class Stack(BaseResource):
     def __repr__(self):
         return "<stack '{0}'>".format(self.name)
 
+
 class SNI(BaseResource):
     """Heroku SNI."""
 
