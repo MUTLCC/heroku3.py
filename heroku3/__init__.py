@@ -6,7 +6,7 @@
 
 
 """
-herokum
+heroku3.py
 ~~~~~~~~~
 
 :copyright: (c) 2013 by Heroku.
@@ -15,7 +15,7 @@ herokum
 
 # Meta.
 
-__title__ = "herokum"
+__title__ = "heroku3"
 __author__ = "Heroku"
 __copyright__ = "Copyright 2013 Heroku"
 __license__ = "MIT"
