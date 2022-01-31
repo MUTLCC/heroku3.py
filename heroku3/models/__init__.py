@@ -183,7 +183,7 @@ class Organization(BaseResource):
         return "<organization '{0}'>".format(self.name)
 
 
-class Team (BaseResource):
+class Team(BaseResource):
     """Heroku Team."""
 
     _strs = ["id", "name"]

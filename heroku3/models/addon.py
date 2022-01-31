@@ -20,7 +20,6 @@ class Addon(BaseResource):
         return r.ok
 
     def upgrade(self, plan_id_or_name):
-
         """Upgrades an addon to the given plan."""
 
         payload = {"plan": plan_id_or_name}

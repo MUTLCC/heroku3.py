@@ -8,21 +8,21 @@ from heroku3.models.slug import Slug
 from .dyno import Dyno
 from .addon import Addon
 from .build import Build
-from .buildpack_installation import BuildpackInstallation
 from .domain import Domain
 from .region import Region
-from .sni_endpoint import SNIEndpoint
-from ..models import User, Stack, BaseResource, Organization, Team, Space
+from ..models import Team, User, Space, Stack, BaseResource, Organization
 from .release import Release
+from ..helpers import validate_name
 from .logdrain import LogDrain
 from .formation import Formation
 from .configvars import ConfigVars
 from .logsession import LogSession
+from ..exceptions import InvalidNameException
 from ..rendezvous import Rendezvous
 from ..structures import DynoListResource
 from .collaborator import Collaborator
-from ..exceptions import InvalidNameException
-from ..helpers import validate_name
+from .sni_endpoint import SNIEndpoint
+from .buildpack_installation import BuildpackInstallation
 
 if sys.version_info > (3, 0):
     from urllib.parse import quote
@@ -37,8 +37,14 @@ class App(BaseResource):
     _ints = ["slug_size", "repo_size"]
     _bools = ["maintenance"]
     _dates = ["archived_at", "created_at", "released_at", "updated_at"]
-    _map = {"region": Region, "owner": User, "stack": Stack,
-            "organization": Organization, "team": Team, "space": Space}
+    _map = {
+        "region": Region,
+        "owner": User,
+        "stack": Stack,
+        "organization": Organization,
+        "team": Team,
+        "space": Space,
+    }
     _pks = ["name", "id"]
 
     def __init__(self):
@@ -57,11 +63,17 @@ class App(BaseResource):
         """Create a new build for this app."""
         buildpack_urls = buildpack_urls or []
         payload = {
-            "source_blob": {"url": url, "checksum": checksum, "version": version,},
+            "source_blob": {
+                "url": url,
+                "checksum": checksum,
+                "version": version,
+            },
             "buildpacks": [{"url": u} for u in buildpack_urls],
         }
         r = self._h._http_resource(
-            method="POST", resource=("apps", self.name, "builds"), data=self._h._resource_serialize(payload),
+            method="POST",
+            resource=("apps", self.name, "builds"),
+            data=self._h._resource_serialize(payload),
         )
         r.raise_for_status()
         item = self._h._resource_deserialize(r.content.decode("utf-8"))
@@ -132,7 +144,10 @@ class App(BaseResource):
         return Addon.new_from_dict(item, h=self._h, app=self)
 
     def remove_addon(self, id):
-        r = self._h._http_resource(method="DELETE", resource=("apps", self.id, "addons", id),)
+        r = self._h._http_resource(
+            method="DELETE",
+            resource=("apps", self.id, "addons", id),
+        )
 
         r.raise_for_status()
         item = self._h._resource_deserialize(r.content.decode("utf-8"))
@@ -165,10 +180,12 @@ class App(BaseResource):
         r = self._h._http_resource(
             method="POST",
             resource=("apps", self.id, "sni-endpoints"),
-            data=self._h._resource_serialize({
-                "certificate_chain": certificate_chain,
-                "private_key": private_key,
-            })
+            data=self._h._resource_serialize(
+                {
+                    "certificate_chain": certificate_chain,
+                    "private_key": private_key,
+                }
+            ),
         )
 
         r.raise_for_status()
@@ -176,10 +193,7 @@ class App(BaseResource):
         return SNIEndpoint.new_from_dict(item, h=self._h, app=self)
 
     def remove_sni_endpoint(self, sni_endpoint_id):
-        r = self._h._http_resource(
-            method="DELETE",
-            resource=("apps", self.id, "sni-endpoints", sni_endpoint_id)
-        )
+        r = self._h._http_resource(method="DELETE", resource=("apps", self.id, "sni-endpoints", sni_endpoint_id))
         r.raise_for_status()
         return r.ok
 
@@ -187,10 +201,12 @@ class App(BaseResource):
         r = self._h._http_resource(
             method="PATCH",
             resource=("apps", self.id, "sni-endpoints", sni_endpoint_id),
-            data=self._h._resource_serialize({
-                "certificate_chain": certificate_chain,
-                "private_key": private_key,
-            })
+            data=self._h._resource_serialize(
+                {
+                    "certificate_chain": certificate_chain,
+                    "private_key": private_key,
+                }
+            ),
         )
         r.raise_for_status()
         item = self._h._resource_deserialize(r.content.decode("utf-8"))
@@ -198,7 +214,10 @@ class App(BaseResource):
 
     def get_domain(self, hostname_or_id):
         """Get the domain for this app.."""
-        r = self._h._http_resource(method="GET", resource=("apps", self.name, "domains", hostname_or_id),)
+        r = self._h._http_resource(
+            method="GET",
+            resource=("apps", self.name, "domains", hostname_or_id),
+        )
         r.raise_for_status()
 
         item = self._h._resource_deserialize(r.content.decode("utf-8"))
@@ -213,10 +232,12 @@ class App(BaseResource):
         r = self._h._http_resource(
             method="POST",
             resource=("apps", self.name, "domains"),
-            data=self._h._resource_serialize({
-                "hostname": hostname,
-                "sni_endpoint": sni_endpoint,
-            }),
+            data=self._h._resource_serialize(
+                {
+                    "hostname": hostname,
+                    "sni_endpoint": sni_endpoint,
+                }
+            ),
         )
 
         r.raise_for_status()
@@ -355,7 +376,10 @@ class App(BaseResource):
     def info(self):
         """Returns current info for this app."""
 
-        return self._h._get_resource(resource=("apps", self.name), obj=App,)
+        return self._h._get_resource(
+            resource=("apps", self.name),
+            obj=App,
+        )
 
     def labs(self, **kwargs):
         return self.features(**kwargs)
@@ -397,7 +421,10 @@ class App(BaseResource):
 
     def remove_logdrain(self, id_or_url):
 
-        r = self._h._http_resource(method="DELETE", resource=("apps", self.id, "log-drains", id_or_url),)
+        r = self._h._http_resource(
+            method="DELETE",
+            resource=("apps", self.id, "log-drains", id_or_url),
+        )
 
         r.raise_for_status()
         item = self._h._resource_deserialize(r.content.decode("utf-8"))
@@ -425,7 +452,10 @@ class App(BaseResource):
         return AppTransfer.new_from_dict(item, h=self._h, app=self)
 
     def delete_transfer(self, id):
-        r = self._h._http_resource(method="DELETE", resource=("account", "app-transfers", id),)
+        r = self._h._http_resource(
+            method="DELETE",
+            resource=("account", "app-transfers", id),
+        )
 
         r.raise_for_status()
         item = self._h._resource_deserialize(r.content.decode("utf-8"))
@@ -505,7 +535,9 @@ class App(BaseResource):
         """Create a new release for this app."""
         payload = {"slug": slug_id}
         r = self._h._http_resource(
-            method="POST", resource=("apps", self.name, "releases"), data=self._h._resource_serialize(payload),
+            method="POST",
+            resource=("apps", self.name, "releases"),
+            data=self._h._resource_serialize(payload),
         )
         r.raise_for_status()
         item = self._h._resource_deserialize(r.content.decode("utf-8"))
@@ -538,12 +570,17 @@ class App(BaseResource):
 
     def buildpacks(self, **kwargs):
         """Get installed buildpacks for this app"""
-        return self._h._get_resources(resource=("apps", self.id, "buildpack-installations"),
-                                      obj=BuildpackInstallation, app=self, **kwargs)
+        return self._h._get_resources(
+            resource=("apps", self.id, "buildpack-installations"), obj=BuildpackInstallation, app=self, **kwargs
+        )
 
     def slug(self, slug_id):
         """Get a slug by id."""
-        return self._h._get_resources(resource=("apps", self.name, "slugs", slug_id), obj=Slug, app=self,)
+        return self._h._get_resources(
+            resource=("apps", self.name, "slugs", slug_id),
+            obj=Slug,
+            app=self,
+        )
 
 
 class AppTransfer(BaseResource):
@@ -572,7 +609,10 @@ class AppTransfer(BaseResource):
         return AppTransfer.new_from_dict(item, h=self._h, app=self)
 
     def delete(self):
-        r = self._h._http_resource(method="DELETE", resource=("account", "app-transfers", self.id),)
+        r = self._h._http_resource(
+            method="DELETE",
+            resource=("account", "app-transfers", self.id),
+        )
 
         r.raise_for_status()
         item = self._h._resource_deserialize(r.content.decode("utf-8"))
