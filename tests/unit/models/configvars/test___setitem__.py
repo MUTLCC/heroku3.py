@@ -16,10 +16,7 @@ def test__setitem__when_key_exists(config_vars, config_dict):
     final_config[key] = value
 
     responses.add(
-        responses.PATCH,
-        config_vars._h._url_for(*config_vars._resource),
-        status=200,
-        json=final_config,
+        responses.PATCH, config_vars._h._url_for(*config_vars._resource), status=200, json=final_config,
     )
 
     config_vars[key] = value

@@ -13,13 +13,16 @@ else:
 
 class Account(BaseResource):
 
-    _strs = ["email", "id"]
+    _strs = ["email", "id", "name"]
     _bools = ["allow_tracking", "beta", "verified"]
     _pks = ["id"]
     _dates = ["created_at", "last_login", "updated_at"]
 
     def __repr__(self):
         return "<account '{0}'>".format(self.email)
+
+    def __name__(self):
+        return "{0}".format(self.name)
 
     def keys(self, **kwargs):
         """The collaborators for this app."""

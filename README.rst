@@ -10,9 +10,6 @@ Heroku3.py
 .. image:: https://coveralls.io/repos/github/martyzz1/heroku3.py/badge.svg?branch=master
    :target: https://coveralls.io/github/martyzz1/heroku3.py?branch=master
 
-.. image:: https://www.travis-ci.org/martyzz1/heroku3.py.svg?branch=master
-   :target: https://www.travis-ci.org/martyzz1/heroku3.py
-
 .. image:: https://img.shields.io/pypi/pyversions/setuptools.svg
 
 This is the updated Python wrapper for the Heroku `API V3. <https://devcenter.heroku.com/articles/platform-api-reference>`_
@@ -367,17 +364,55 @@ Get a list of domains configured for this app::
 
 Add a domain to this app::
 
-    domain = app.add_domain('domain_hostname')
+    domain = app.add_domain('domain_hostname', 'sni_endpoint_id_or_name')
+    domain = app.add_domain('domain_hostname', None)  # domain will not be associated with an SNI endpoint
 
-Remove a domain from an app::
+Example of finding a matching SNI, given a domain::
+
+    domain = 'subdomain.domain.com'
+    sni_endpoint_id = None
+    for sni_endpoint in app.sni_endpoints():
+        for cert_domain in sni_endpoint.ssl_cert.cert_domains:
+            # check root or wildcard
+            if cert_domain in domain or cert_domain[1:] in domain:
+                sni_endpoint_id_or_name = sni_endpoint.id
+    domain = app.add_domain(domain, sni_endpoint_id)
+
+Remove a domain from this app::
 
     domain = app.remove_domain('domain_hostname')
+
+SNI Endpoints
+~~~~~~~~~~~~~
+
+Get a list of SNI Endpoints for this app::
+
+    sni_endpoints = app.sni_endpoints()
+
+Add an SNI endpoint to this app::
+
+    sni_endpoint = app.add_sni_endpoint(
+        '-----BEGIN CERTIFICATE----- ...',
+        '-----BEGIN RSA PRIVATE KEY----- ...'
+    )
+
+Update an SNI endpoint for this app::
+
+    sni_endpoint = app.update_sni_endpoint(
+        'sni_endpoint_id_or_name',
+        '-----BEGIN CERTIFICATE----- ...',
+        '-----BEGIN RSA PRIVATE KEY----- ...'
+    )
+
+Delete an SNI endpoint for this app::
+
+    app.remove_sni_endpoint('sni_endpoint_id_or_name')
 
 Dynos & Process Formations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Dynos
-_______
+_____
 
 Dynos represent all your running dyno processes. Use dynos to investigate whats running on your app.
 Use Dynos to create one off processes/run commands.

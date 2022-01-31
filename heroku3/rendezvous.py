@@ -12,8 +12,8 @@ uses_netloc.append("rendezvous")
 class InvalidResponseFromRendezVous(Exception):
     pass
 
-
-class Rendezvous:
+  
+class Rendezvous():
     def __init__(self, url, printout=False, timeout_secs=29):
         self.url = url
         urlp = urlparse(url)

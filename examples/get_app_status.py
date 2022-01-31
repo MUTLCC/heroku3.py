@@ -10,11 +10,10 @@ import os
 import sys
 from pprint import pprint
 
-from urllib3.exceptions import ReadTimeoutError
-from requests.exceptions import Timeout, ConnectionError
-
 # Third party libraries
 import heroku3
+from urllib3.exceptions import ReadTimeoutError
+from requests.exceptions import Timeout, ConnectionError
 
 HEROKU_API_KEY = os.environ["HEROKU_API_KEY"]
 

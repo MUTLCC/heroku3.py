@@ -4,7 +4,6 @@ from __future__ import division, print_function, absolute_import
 
 # Third party libraries
 import pytest
-
 from heroku3.api import MaxRangeExceeded
 
 
@@ -13,18 +12,12 @@ from heroku3.api import MaxRangeExceeded
 @pytest.mark.parametrize("sort", ["asc", "desc"])
 @pytest.mark.parametrize("valrange", [None, "some valrange"])
 def test__get_headers_for_request_with_legacy(
-    heroku_core,
-    limit,
-    order_by,
-    sort,
-    valrange,
+    heroku_core, limit, order_by, sort, valrange,
 ):
     expected_header = "Accept"
     expected_value = "application/json"
 
-    headers = heroku_core._get_headers_for_request(
-        legacy=True,
-    )
+    headers = heroku_core._get_headers_for_request(legacy=True,)
 
     assert len(headers) == 1
     assert expected_header in headers
@@ -36,20 +29,11 @@ def test__get_headers_for_request_with_legacy(
 @pytest.mark.parametrize("sort", [None, "asc", "desc"])
 @pytest.mark.parametrize("valrange", [None, "some valrange"])
 def test__get_headers_for_request(
-    heroku_core,
-    limit,
-    order_by,
-    sort,
-    valrange,
+    heroku_core, limit, order_by, sort, valrange,
 ):
     expected_header = "Range"
 
-    headers = heroku_core._get_headers_for_request(
-        limit=limit,
-        order_by=order_by,
-        sort=sort,
-        valrange=valrange,
-    )
+    headers = heroku_core._get_headers_for_request(limit=limit, order_by=order_by, sort=sort, valrange=valrange,)
     args = (
         limit,
         order_by,

@@ -21,10 +21,9 @@ import time
 import itertools
 from pprint import pprint
 
-from requests.exceptions import Timeout, ConnectionError
-
 # Third party libraries
 import heroku3
+from requests.exceptions import Timeout, ConnectionError
 
 HEROKU_API_KEY = os.environ["HEROKU_API_KEY"]
 GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]

@@ -1,9 +1,11 @@
 *~
 *.pyc
+.envrc
+.direnv
 .cache/
 build/
 dist/
-heroku.egg-info/
+heroku3.egg-info/
 venv
 .circleci/processed.yml
 

@@ -43,7 +43,7 @@ setup(
     author="Mutlu",
     author_email="",
     url="https://github.com/MUTLCC/herokum",
-    download_url="https://github.com/MUTLCC/herokum/tarball/v4.2.7",
+    download_url="https://github.com/MUTLCC/herokum/",
     packages=["heroku3"],
     package_data={
         "": [

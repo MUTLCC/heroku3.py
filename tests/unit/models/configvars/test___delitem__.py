@@ -16,10 +16,7 @@ def test__delitem__when_key_exists(config_vars, config_dict):
     del final_config[key]
 
     responses.add(
-        responses.PATCH,
-        config_vars._h._url_for(*config_vars._resource),
-        status=200,
-        json=final_config,
+        responses.PATCH, config_vars._h._url_for(*config_vars._resource), status=200, json=final_config,
     )
 
     del config_vars[key]
@@ -35,10 +32,7 @@ def test__delitem__when_key_not_removed(config_vars, config_dict):
     original_config = config_vars._ConfigVars__data
 
     responses.add(
-        responses.PATCH,
-        config_vars._h._url_for(*config_vars._resource),
-        status=200,
-        json=config_dict,
+        responses.PATCH, config_vars._h._url_for(*config_vars._resource), status=200, json=config_dict,
     )
 
     with pytest.raises(AssertionError):
