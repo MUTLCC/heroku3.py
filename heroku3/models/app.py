@@ -125,13 +125,10 @@ class App(BaseResource):
 
     def install_addon(self, plan_id_or_name, config=None, attachment_name=None):
 
-        payload = {}
         if not config:
             config = {}
 
-        payload["plan"] = plan_id_or_name
-        payload["config"] = config
-
+        payload = {"plan": plan_id_or_name, "config": config}
         if attachment_name:
             payload["attachment"] = {"name": attachment_name}
 
@@ -310,9 +307,7 @@ class App(BaseResource):
         updates is a dictionary or iterable of 2-tuples of
         formation_id_or_name to quantity.
         """
-        payload = {}
-        payload["updates"] = []
-
+        payload = {"updates": []}
         for type, quantity in dict(updates).items():
             assert quantity == 0 or quantity
             payload["updates"].append({"type": type, "quantity": quantity})
@@ -330,9 +325,7 @@ class App(BaseResource):
         updates is a dictionary or iterable of 2-tuples of
         formation_id_or_name to size.
         """
-        payload = {}
-        payload["updates"] = []
-
+        payload = {"updates": []}
         for type, size in dict(updates).items():
             assert size == 0 or size
             payload["updates"].append({"type": type, "size": size})
@@ -346,9 +339,7 @@ class App(BaseResource):
 
     def scale_formation_process(self, formation_id_or_name, quantity):
         assert quantity == 0 or quantity
-        payload = {}
-        payload["quantity"] = quantity
-
+        payload = {"quantity": quantity}
         r = self._h._http_resource(
             method="PATCH",
             resource=("apps", self.id, "formation", formation_id_or_name),
@@ -360,9 +351,7 @@ class App(BaseResource):
 
     def resize_formation_process(self, formation_id_or_name, size):
         assert size == 0 or size
-        payload = {}
-        payload["size"] = size
-
+        payload = {"size": size}
         r = self._h._http_resource(
             method="PATCH",
             resource=("apps", self.id, "formation", formation_id_or_name),
@@ -481,9 +470,8 @@ class App(BaseResource):
                 raise InvalidNameException(
                     "Name must start with a letter, end with a letter or digit and can only contain lowercase letters, digits, and dashes."
                 )
-        else:
-            if maintenance or maintenance == 0:
-                payload["maintenance"] = maintenance
+        elif maintenance or maintenance == 0:
+            payload["maintenance"] = maintenance
 
         r = self._h._http_resource(
             method="PATCH", resource=("apps", self.id), data=self._h._resource_serialize(payload)
@@ -598,9 +586,7 @@ class AppTransfer(BaseResource):
 
     def update(self, state):
 
-        payload = {}
-        payload["state"] = state
-
+        payload = {"state": state}
         r = self._h._http_resource(
             method="PATCH", resource=("account", "app-transfers", self.id), data=self._h._resource_serialize(payload)
         )

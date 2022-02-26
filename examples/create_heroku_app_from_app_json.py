@@ -104,13 +104,7 @@ def stream_build_logs(appsetup_id):
         for line in build_iterator:
             if line:
                 print("{0}".format(line.decode("utf-8")))
-    except Timeout:
-        appsetup = heroku_conn.get_appsetup(appsetup_id)
-        if appsetup.build.status == "pending":
-            return stream_build_logs(appsetup_id)
-        else:
-            return
-    except ConnectionError:
+    except (Timeout, ConnectionError):
         appsetup = heroku_conn.get_appsetup(appsetup_id)
         if appsetup.build.status == "pending":
             return stream_build_logs(appsetup_id)

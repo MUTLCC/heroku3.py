@@ -56,7 +56,7 @@ def test__get_headers_for_request(
         sort,
         valrange,
     )
-    _all_args_none = all([arg is None for arg in args])
+    _all_args_none = all(arg is None for arg in args)
     assert _all_args_none or len(headers) == 1
     assert _all_args_none or expected_header in headers
     if valrange is not None:

@@ -92,7 +92,7 @@ class HerokuCore(object):
     def _verify_api_key(self):
         r = self._session.get(self._url_for("account/rate-limits"))
 
-        self._api_key_verified = True if r.ok else False
+        self._api_key_verified = bool(r.ok)
 
         return self._api_key_verified
 
@@ -125,7 +125,7 @@ class HerokuCore(object):
         headers = {}
         if legacy is True:
             # Nasty patch session to fallback to old api
-            headers.update({"Accept": "application/json"})
+            headers["Accept"] = "application/json"
 
         else:
             range_str = None
@@ -133,13 +133,9 @@ class HerokuCore(object):
             if order_by or limit or valrange or sort:
                 range_str = ""
                 seperator = ""
-                if order_by:
-                    range_str = "{0} ..;".format(order_by)
-                else:
-                    range_str = "id ..;"
-
+                range_str = "{0} ..;".format(order_by) if order_by else "id ..;"
                 if sort is not None:
-                    assert sort == "asc" or sort == "desc"
+                    assert sort in ["asc", "desc"]
                     range_str += " order={0}".format(sort)
                     seperator = ","
                 else:
@@ -155,13 +151,13 @@ class HerokuCore(object):
                     range_str += "{0}max={1}".format(seperator, limit)
 
                 range_str += ";"
-                # print(range_str)
-                if valrange:
-                    # If given, This should override limit and order_by
-                    range_str = valrange
+            # print(range_str)
+            if valrange:
+                # If given, This should override limit and order_by
+                range_str = valrange
 
             if range_str is not None:
-                headers.update({"Range": range_str})
+                headers["Range"] = range_str
 
         return headers
 
@@ -316,10 +312,10 @@ class Heroku(HerokuCore):
 
         payload = {"source_blob": source_blob}
         if overrides:
-            payload.update({"overrides": overrides})
+            payload["overrides"] = overrides
 
         if app:
-            payload.update({"app": app})
+            payload["app"] = app
 
         r = self._http_resource(method="POST", resource=("app-setups",), data=self._resource_serialize(payload))
         r.raise_for_status()
@@ -388,15 +384,14 @@ class Heroku(HerokuCore):
             item = self._resource_deserialize(r.content.decode("utf-8"))
             app = App.new_from_dict(item, h=self)
         except HTTPError as e:
-            if "Name is already taken" in str(e):
-                try:
-                    app = self.app(name)
-                except:  # noqa
-                    raise
-                else:
-                    print("Warning - {0:s}".format(str(e)))
-            else:
+            if "Name is already taken" not in str(e):
                 raise
+            try:
+                app = self.app(name)
+            except:  # noqa
+                raise
+            else:
+                print("Warning - {0:s}".format(str(e)))
         return app
 
     def keys(self, **kwargs):
@@ -424,10 +419,10 @@ class Heroku(HerokuCore):
 
         payload = {"scope": scope}
         if oauthclient_id:
-            payload.update({"client": oauthclient_id})
+            payload["client"] = oauthclient_id
 
         if description:
-            payload.update({"description": description})
+            payload["description"] = description
 
         r = self._http_resource(
             method="POST", resource=("oauth", "authorizations"), data=self._h._resource_serialize(payload)
@@ -480,19 +475,19 @@ class Heroku(HerokuCore):
         payload = {}
         grant = {}
         if client_secret:
-            payload.update({"client": {"secret": client_secret}})
+            payload["client"] = {"secret": client_secret}
 
         if grant_code:
-            grant.update({"code": grant_code})
+            grant["code"] = grant_code
 
         if grant_type:
-            grant.update({"type": grant_type})
+            grant["type"] = grant_type
 
         if refresh_token:
-            payload.update({"refresh_token": {"token": refresh_token}})
+            payload["refresh_token"] = {"token": refresh_token}
 
         if grant:
-            payload.update({"grant": grant})
+            payload["grant"] = grant
 
         r = self._http_resource(method="POST", resource=("oauth", "tokens"), data=self._h._resource_serialize(payload))
         r.raise_for_status()
@@ -530,11 +525,9 @@ class Heroku(HerokuCore):
 
     def ratelimit_remaining(self):
 
-        if self._ratelimit_remaining is not None:
-            return int(self._ratelimit_remaining)
-        else:
+        if self._ratelimit_remaining is None:
             self.rate_limit
-            return int(self._ratelimit_remaining)
+        return int(self._ratelimit_remaining)
 
     def stream_app_log(self, app_id_or_name, dyno=None, lines=100, source=None, timeout=None):
         logger = self._app_logger(app_id_or_name, dyno=dyno, lines=lines, source=source, tail=True)
