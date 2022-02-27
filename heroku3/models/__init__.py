@@ -84,11 +84,7 @@ class BaseResource(object):
                 pass
 
     def dict(self):
-        d = dict()
-        for k in self._keys():
-            d[k] = self.__dict__.get(k)
-
-        return d
+        return {k: self.__dict__.get(k) for k in self._keys()}
 
     def change_connection(self, h):
         self._h = h

@@ -53,14 +53,11 @@ def test_to_python(str_value, date_value, int_value, dict_value, bool_value):
     arguments = locals()
 
     Resource = type("Resource", (BaseResource,), dict([("_{0}".format(k), v) for k, v in _CLASS_ATTRS.items()]))
-    data = {}
-    for attr in itertools.chain(*_CLASS_ATTRS.values()):
-        if attr in arguments and arguments[attr] is not None:
-            data.update(
-                {
-                    attr: arguments[attr],
-                }
-            )
+    data = {
+        attr: arguments[attr]
+        for attr in itertools.chain(*_CLASS_ATTRS.values())
+        if attr in arguments and arguments[attr] is not None
+    }
 
     result = to_python(
         Resource(), data, **dict([(k if k != "map" else "objects", v) for k, v in _CLASS_ATTRS.items()])

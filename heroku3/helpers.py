@@ -25,12 +25,7 @@ def is_collection(obj):
           (returns False)
     """
     col = getattr(obj, "__getitem__", False)
-    val = False if (not col) else True
-
-    if isinstance(obj, basestring):
-        val = False
-
-    return val
+    return False if isinstance(obj, basestring) else bool(col)
 
 
 # from kennethreitz/python-github3
@@ -45,7 +40,7 @@ def to_python(
     :param date_keys: List of in_dict keys that will be extrad as datetimes.
     :param object_map: Dict of {key, obj} map, for nested object results.
     """
-    d = dict()
+    d = {}
 
     if strs:
         for in_key in strs:
@@ -106,4 +101,4 @@ def validate_name(name):
         False otherwise.
     """
     name_regex = re.compile(r"^[a-z][a-z0-9-]{1,28}[a-z0-9]$")
-    return True if name_regex.search(name) is not None else False
+    return name_regex.search(name) is not None

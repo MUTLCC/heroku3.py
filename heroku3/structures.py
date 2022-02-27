@@ -26,15 +26,13 @@ class KeyedListResource(object):
         return repr(self._items)
 
     def __iter__(self):
-        for item in self._items:
-            yield item
+        yield from self._items
 
     def __getitem__(self, key):
 
         # Support index operators.
-        if isinstance(key, int):
-            if abs(key) <= len(self._items):
-                return self._items[key]
+        if isinstance(key, int) and abs(key) <= len(self._items):
+            return self._items[key]
 
         v = self.get(key)
 
@@ -51,10 +49,7 @@ class KeyedListResource(object):
         except KeyError:
             return False
         else:
-            if v is None:
-                return False
-            else:
-                return True
+            return v is not None
 
     def add(self, *args, **kwargs):
 
@@ -101,9 +96,7 @@ class DynoListResource(KeyedListResource):
             return super(DynoListResource, self).__getitem__(key)
         except KeyError as why:
 
-            c = [p for p in self._items if key == p.type]
-
-            if c:
+            if c := [p for p in self._items if key == p.type]:
                 return DynoTypeListResource(items=c)
             else:
                 raise why
